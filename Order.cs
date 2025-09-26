@@ -4,14 +4,12 @@ namespace LT_B8_OOP
     {
         public string OrderId { get; set; }
         public DateTime OrderDate { get; set; }
-        // public Customer Customer { get; set; } // mỗi đơn hàng thuộc về một khách hàng
         public List<OrderDetail> OrderDetails { get; set; } // composition: một đơn hàng có nhiều chi tiết đơn hàng
 
         public Order(string orderId, DateTime orderDate)
         {
             OrderId = orderId;
             OrderDate = orderDate;
-            // Customer = customer;
             OrderDetails = new List<OrderDetail>();
         }
 
@@ -42,13 +40,19 @@ namespace LT_B8_OOP
         public void DisplayOrder()
         {
             Console.WriteLine($"OrderId: {OrderId}, OrderDate: {OrderDate}");
-            // Customer.DisplayInfo();
             Console.WriteLine("Order Details:");
             foreach (OrderDetail orderDetail in OrderDetails)
             {
                 orderDetail.DisplayOrderDetail();
             }
             Console.WriteLine($"Total Amount: {Total()}");
+        }
+
+        // composition: khi xóa đơn hàng thì tất cả chi tiết đơn hàng cũng bị xóa
+        public void Delete()
+        {
+            OrderDetails.Clear();
+            Console.WriteLine($"Đã xóa đơn hàng {OrderId} và toàn bộ chi tiết của nó.");
         }
     }
 }

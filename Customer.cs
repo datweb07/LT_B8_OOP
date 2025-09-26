@@ -32,11 +32,5 @@ namespace LT_B8_OOP
             Console.WriteLine($"Khách hàng {Name} đã đặt đơn hàng {order.OrderId} vào ngày {order.OrderDate}");
         }
 
-        // aggregation
-        public void RemoveOrder(Order order)
-        {
-            orders.Remove(order);
-            Console.WriteLine($"Khách hàng {Name} đã hủy đơn hàng {order.OrderId}");
-        }
     }
 }

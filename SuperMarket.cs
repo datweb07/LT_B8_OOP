@@ -8,6 +8,8 @@ namespace LT_B8_OOP
 
         private List<Customer> customers; // aggregation: supermarket có nhiều khách hàng
 
+        private List<Order> orders; // manage orders centrally to allow single-parameter removal
+
         private IProductFactory productFactory; // association: sử dụng factory để tạo sản phẩm
 
         public BehavioralTransaction behavioralTransaction { get; set; } // association
@@ -15,6 +17,7 @@ namespace LT_B8_OOP
         {
             products = new List<Product>();
             customers = new List<Customer>();
+            orders = new List<Order>();
             productFactory = new ProductFactory();
             behavioralTransaction = new BehavioralTransaction();
         }
@@ -47,32 +50,52 @@ namespace LT_B8_OOP
             customers.Add(customer);
         }
 
+        public void RemoveCustomer(Customer customer)
+        {
+            customers.Remove(customer);
+        }
+
+        // Manage orders centrally: delete by order only, and cascade to its details
+        public void RemoveOrder(Order order)
+        {
+            // cascade delete order details (composition)
+            order.Delete();
+            orders.Remove(order);
+
+            // // remove from supermarket's order registry if present
+            // if (orders.Contains(order))
+            // {
+            //     orders.Remove(order);
+            // }
+
+            // // also remove from the owning customer, if any
+            // Customer? owner = null;
+            // foreach (Customer c in customers)
+            // {
+            //     if (c.orders.Contains(order))
+            //     {
+            //         owner = c;
+            //         c.orders.Remove(order);
+            //         break;
+            //     }
+            // }
+
+            // if (owner != null)
+            // {
+            //     Console.WriteLine($"Đã xóa đơn hàng {order.OrderId} của khách hàng {owner.Name}");
+            // }
+            // else
+            // {
+            //     Console.WriteLine($"Đã xóa đơn hàng {order.OrderId}");
+            // }
+        }
+
 
         // Association
         public void CustomerPurchaseProduct(Customer customer, Product product)
         {
             behavioralTransaction.AddCustomerProductAssociation(customer, product);
         }
-
-        // take(B obj)
-        // public void ProcessOrder(Order order)
-        // {
-        //     Console.WriteLine($"Đang xử lý đơn hàng {order.OrderId} cho khách hàng {order.Customer.Name}");
-        //     foreach (OrderDetail detail in order.OrderDetails)
-        //     {
-        //         Product product = detail.Product;
-        //         if (product.Quantity >= detail.Quantity)
-        //         {
-        //             product.Quantity -= detail.Quantity;
-        //             Console.WriteLine($"Đã bán {detail.Quantity} của {product.Name}");
-        //         }
-        //         else
-        //         {
-        //             Console.WriteLine($"Không đủ số lượng của {product.Name} để bán");
-        //         }
-        //     }
-        //     Console.WriteLine($"Tổng tiền đơn hàng {order.OrderId}: {order.Total()}");
-        // }
 
         public void DisplayProducts()
         {

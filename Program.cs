@@ -1,9 +1,15 @@
-﻿namespace LT_B8_OOP
+﻿using System.Text;
+
+namespace LT_B8_OOP
 {
     public class Program
     {
         public static void Main(string[] args)
         {
+            Console.OutputEncoding = Encoding.UTF8;
+            Console.Clear();
+
+
             // Singleton instance
             SuperMarket superMarket = SuperMarket.GetInstance;
 
@@ -59,7 +65,7 @@
 
             // khách hàng phụ thuộc vào đơn hàng
             customer1.AddOrder(order1);
-            customer1.AddOrder(order2);
+            customer2.AddOrder(order2);
 
             
 
@@ -75,35 +81,28 @@
             order2.AddProduct(product2, 3);
 
 
-            // hiển thị đơn hàng
-            order1.DisplayOrder();
-            System.Console.WriteLine();
-            order2.DisplayOrder();
+            Console.WriteLine();
+            superMarket.RemoveCustomer(customer1);
+            superMarket.DisplayCustomers();
             Console.WriteLine();
 
-            // // aggregation: khách hàng có thể có nhiều đơn hàng
-            // // Order order2 = new Order("DH002", DateTime.Now, customer1);
-            // customer1.AddOrder(order2); // customer có nhiều order
 
-            // order2.AddProduct(product3, 5); // thêm sản phẩm vào đơn hàng 2
-            // order2.DisplayOrder();
-            // Console.WriteLine();
+            Console.WriteLine("Kiểm tra đơn hàng DH001: ");
+            order1.DisplayOrder();
+            Console.WriteLine();
 
-            // // superMarket.ProcessOrder(order2); // xử lý đơn hàng 2
-            // Console.WriteLine();
+            superMarket.RemoveOrder(order1);
+            order1.DisplayOrder();
 
-            // aggregation
-            Console.WriteLine($"\n Tất cả đơn hàng của {customer1.Name}:");
-            foreach (Order order in customer1.orders)
-            {
-                order.DisplayOrder();
-            }
+
 
             Console.WriteLine($"\n Tất cả đơn hàng của {customer2.Name}:");
             foreach (Order order in customer2.orders)
             {
-                order.DisplayOrder();
+                order2.DisplayOrder();
             }
+
+            Console.ReadKey();
         }
     }
 }
