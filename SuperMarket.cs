@@ -9,6 +9,7 @@ namespace LT_B8_OOP
         private List<Customer> customers; // aggregation: supermarket có nhiều khách hàng
 
         private List<Order> orders; // manage orders centrally to allow single-parameter removal
+        private List<OrderDetail> ordersDetail;
 
         private IProductFactory productFactory; // association: sử dụng factory để tạo sản phẩm
 
@@ -20,6 +21,7 @@ namespace LT_B8_OOP
             orders = new List<Order>();
             productFactory = new ProductFactory();
             behavioralTransaction = new BehavioralTransaction();
+            ordersDetail = new List<OrderDetail>();
         }
 
         private static readonly object padlock = new object();
@@ -50,51 +52,29 @@ namespace LT_B8_OOP
             customers.Add(customer);
         }
 
-        public void RemoveCustomer(Customer customer)
-        {
-            customers.Remove(customer);
-        }
 
-        // Manage orders centrally: delete by order only, and cascade to its details
         public void RemoveOrder(Order order)
         {
-            // cascade delete order details (composition)
-            order.Delete();
             orders.Remove(order);
-
-            // // remove from supermarket's order registry if present
-            // if (orders.Contains(order))
-            // {
-            //     orders.Remove(order);
-            // }
-
-            // // also remove from the owning customer, if any
-            // Customer? owner = null;
-            // foreach (Customer c in customers)
-            // {
-            //     if (c.orders.Contains(order))
-            //     {
-            //         owner = c;
-            //         c.orders.Remove(order);
-            //         break;
-            //     }
-            // }
-
-            // if (owner != null)
-            // {
-            //     Console.WriteLine($"Đã xóa đơn hàng {order.OrderId} của khách hàng {owner.Name}");
-            // }
-            // else
-            // {
-            //     Console.WriteLine($"Đã xóa đơn hàng {order.OrderId}");
-            // }
+            // trả hàng: cộng lại tồn kho cho từng sản phẩm trong OrderDetails
+            foreach (OrderDetail detail in order.OrderDetails)
+            {
+                detail.Product.Quantity += detail.Quantity;
+            }
+            order.OrderDetails.Clear();
+            
+            // also detach from any customer lists
+            foreach (Customer c in customers)
+            {
+                c.orders.Remove(order);
+            }
         }
 
 
-        // Association
-        public void CustomerPurchaseProduct(Customer customer, Product product)
+        // Association 
+        public void CustomersPurchaseProducts(List<Customer> customers, List<Product> products)
         {
-            behavioralTransaction.AddCustomerProductAssociation(customer, product);
+            behavioralTransaction.AddCustomerProductAssociation(customers, products);
         }
 
         public void DisplayProducts()
@@ -124,7 +104,7 @@ namespace LT_B8_OOP
                     return product;
                 }
             }
-            throw new InvalidOperationException("Product not found.");
+            throw new InvalidOperationException("Không tìm thấy sản phẩm.");
         }
 
         public Customer FindCustomerById(string customerId)
@@ -136,7 +116,60 @@ namespace LT_B8_OOP
                     return customer;
                 }
             }
-            throw new InvalidOperationException("Customer not found.");
+            throw new InvalidOperationException("Không tìm thấy khách hàng.");
+        }
+
+        public void RemoveCustomer(Customer customer)
+        {
+            // Aggregation: khi xóa customer, các order của họ vẫn tồn tại
+            // Chỉ xóa customer khỏi danh sách, không xóa các order
+            customers.Remove(customer);
+            Console.WriteLine($"Đã xóa khách hàng {customer.Name} khỏi danh sách. Các đơn hàng của khách hàng vẫn được giữ lại.");
+        }
+
+        // Aggregation Customer ↔ Order
+        public Order CreateOrder(string orderId, DateTime orderDate)
+        {
+            Order order = new Order(orderId, orderDate);
+            orders.Add(order);
+            return order;
+        }
+
+        public void AttachOrderToCustomer(Customer customer, Order order)
+        {
+            if (!orders.Contains(order))
+            {
+                orders.Add(order);
+            }
+            if (!customer.orders.Contains(order))
+            {
+                customer.orders.Add(order);
+            }
+            Console.WriteLine($"Đính kèm order {order.OrderId} cho khách hàng {customer.Name}.");
+        }
+
+
+        public void DisplayAllOrders()
+        {
+            Console.WriteLine("Danh sách tất cả order trong hệ thống (tồn tại độc lập):");
+            foreach (Order order in orders)
+            {
+                order.DisplayOrder();
+            }
+        }
+
+        // Chấp nhận order trả về cửa hàng (nếu chưa có trong kho order)
+        public void AcceptOrderIntoStore(Order order)
+        {
+            if (!orders.Contains(order))
+            {
+                orders.Add(order);
+            }
+            // trả hàng: cộng lại tồn kho cho từng sản phẩm trong OrderDetails
+            foreach (OrderDetail detail in order.OrderDetails)
+            {
+                detail.Product.Quantity += detail.Quantity;
+            }
         }
     }
 }

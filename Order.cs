@@ -20,6 +20,8 @@ namespace LT_B8_OOP
             {
                 OrderDetail orderDetail = new OrderDetail(product, quantity);
                 OrderDetails.Add(orderDetail);
+                // giảm tồn kho khi thêm vào đơn hàng
+                product.Quantity -= quantity;
                 Console.WriteLine($"Đã thêm {quantity} của {product.Name} vào đơn hàng {OrderId}");
             }
             else
@@ -46,13 +48,6 @@ namespace LT_B8_OOP
                 orderDetail.DisplayOrderDetail();
             }
             Console.WriteLine($"Total Amount: {Total()}");
-        }
-
-        // composition: khi xóa đơn hàng thì tất cả chi tiết đơn hàng cũng bị xóa
-        public void Delete()
-        {
-            OrderDetails.Clear();
-            Console.WriteLine($"Đã xóa đơn hàng {OrderId} và toàn bộ chi tiết của nó.");
         }
     }
 }

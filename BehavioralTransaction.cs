@@ -13,19 +13,25 @@ namespace LT_B8_OOP
             CustomerProducts = new Dictionary<Customer, List<Product>>();
         }
 
-        // association: mối quan hệ giữa khách hàng và sản phẩm
-        public void AddCustomerProductAssociation(Customer customer, Product product)
+        // association 
+        public void AddCustomerProductAssociation(List<Customer> customers, List<Product> products)
         {
-            if (!Customers.Contains(customer))
-                Customers.Add(customer);
+            foreach (Customer customer in customers)
+            {
+                if (!Customers.Contains(customer))
+                    Customers.Add(customer);
 
-            if (!Products.Contains(product))
-                Products.Add(product);
+                if (!CustomerProducts.ContainsKey(customer))
+                    CustomerProducts[customer] = new List<Product>();
 
-            if (!CustomerProducts.ContainsKey(customer))
-                CustomerProducts[customer] = new List<Product>();
+                foreach (Product product in products)
+                {
+                    if (!Products.Contains(product))
+                        Products.Add(product);
 
-            CustomerProducts[customer].Add(product);
+                    CustomerProducts[customer].Add(product);
+                }
+            }
         }
 
         // Hiển thị khách hàng mua nhiều sản phẩm
