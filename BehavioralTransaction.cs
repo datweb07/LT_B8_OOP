@@ -4,13 +4,15 @@ namespace LT_B8_OOP
     {
         public List<Customer> Customers { get; set; }
         public List<Product> Products { get; set; }
-        private Dictionary<Customer, List<Product>> CustomerProducts; // 1 customer có nhiều product
+        private Dictionary<Customer, List<Product>> CustomerProducts; 
+        private Dictionary<Product, List<Customer>> ProductCustomers;
 
         public BehavioralTransaction()
         {
             Customers = new List<Customer>();
             Products = new List<Product>();
             CustomerProducts = new Dictionary<Customer, List<Product>>();
+            ProductCustomers = new Dictionary<Product, List<Customer>>();
         }
 
         // association 
@@ -18,9 +20,7 @@ namespace LT_B8_OOP
         {
             foreach (Customer customer in customers)
             {
-                if (!Customers.Contains(customer))
-                    Customers.Add(customer);
-
+                // tạo list products cho customer 
                 if (!CustomerProducts.ContainsKey(customer))
                     CustomerProducts[customer] = new List<Product>();
 
@@ -29,7 +29,17 @@ namespace LT_B8_OOP
                     if (!Products.Contains(product))
                         Products.Add(product);
 
-                    CustomerProducts[customer].Add(product);
+                    // tạo list customers cho product 
+                    if (!ProductCustomers.ContainsKey(product))
+                        ProductCustomers[product] = new List<Customer>();
+
+                    // customer x roduct
+                    if (!CustomerProducts[customer].Contains(product))
+                        CustomerProducts[customer].Add(product);
+
+                    // product x customer
+                    if (!ProductCustomers[product].Contains(customer))
+                        ProductCustomers[product].Add(customer);
                 }
             }
         }
