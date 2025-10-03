@@ -3,17 +3,16 @@ namespace LT_B8_OOP
     public class SuperMarket
     {
         private static SuperMarket? instance;
-        private static readonly object _lock = new object();
         private List<Product> products; // composition: supermarket chứa các sản phẩm
 
         private List<Customer> customers; // aggregation: supermarket có nhiều khách hàng
 
         private List<Order> orders; // manage orders centrally to allow single-parameter removal
-        private List<OrderDetail> ordersDetail;
 
         private IProductFactory productFactory; // association: sử dụng factory để tạo sản phẩm
 
         public BehavioralTransaction behavioralTransaction { get; set; } // association
+        public Warehouse Warehouse { get; private set; }
         private SuperMarket()
         {
             products = new List<Product>();
@@ -21,7 +20,7 @@ namespace LT_B8_OOP
             orders = new List<Order>();
             productFactory = new ProductFactory();
             behavioralTransaction = new BehavioralTransaction();
-            ordersDetail = new List<OrderDetail>();
+            Warehouse = new Warehouse();
         }
 
         private static readonly object padlock = new object();
@@ -45,6 +44,8 @@ namespace LT_B8_OOP
         {
             Product product = productFactory.CreateProduct(type, productId, name, origin, price, quantity, parameters);
             products.Add(product);
+            // nhập kho số lượng ban đầu
+            Warehouse.Import(product, quantity);
         }
 
         public void AddCustomer(Customer customer)
@@ -59,10 +60,12 @@ namespace LT_B8_OOP
             // trả hàng: cộng lại tồn kho cho từng sản phẩm trong OrderDetails
             foreach (OrderDetail detail in order.OrderDetails)
             {
+                // hoàn trả về kho và đồng bộ số lượng hiển thị
+                Warehouse.Return(detail.Product, detail.Quantity);
                 detail.Product.Quantity += detail.Quantity;
             }
             order.OrderDetails.Clear();
-            
+
             // also detach from any customer lists
             foreach (Customer c in customers)
             {
@@ -135,6 +138,22 @@ namespace LT_B8_OOP
             return order;
         }
 
+        // Thêm sản phẩm vào order qua kho: xuất kho nếu đủ hàng, sau đó thêm chi tiết
+        public bool AddProductToOrder(Order order, Product product, int quantity)
+        {
+            if (Warehouse.Export(product, quantity))
+            {
+                OrderDetail orderDetail = new OrderDetail(product, quantity);
+                order.OrderDetails.Add(orderDetail);
+                // đồng bộ quantity hiển thị của sản phẩm trong danh sách cửa hàng
+                product.Quantity -= quantity;
+                Console.WriteLine($"Đã thêm {quantity} của {product.Name} vào đơn hàng {order.OrderId} (xuất kho thành công)");
+                return true;
+            }
+            Console.WriteLine($"Không đủ số lượng của {product.Name} trong kho để thêm vào đơn hàng {order.OrderId}");
+            return false;
+        }
+
         public void AttachOrderToCustomer(Customer customer, Order order)
         {
             if (!orders.Contains(order))
@@ -151,25 +170,14 @@ namespace LT_B8_OOP
 
         public void DisplayAllOrders()
         {
-            Console.WriteLine("Danh sách tất cả order trong hệ thống (tồn tại độc lập):");
+            Console.WriteLine("Danh sách tất cả order trong hệ thống:");
             foreach (Order order in orders)
             {
                 order.DisplayOrder();
+                Console.WriteLine();
             }
         }
 
-        // Chấp nhận order trả về cửa hàng (nếu chưa có trong kho order)
-        public void AcceptOrderIntoStore(Order order)
-        {
-            if (!orders.Contains(order))
-            {
-                orders.Add(order);
-            }
-            // trả hàng: cộng lại tồn kho cho từng sản phẩm trong OrderDetails
-            foreach (OrderDetail detail in order.OrderDetails)
-            {
-                detail.Product.Quantity += detail.Quantity;
-            }
-        }
+
     }
 }

@@ -60,47 +60,39 @@ namespace LT_B8_OOP
             Product product2 = superMarket.FindProductById("D001");
             Product product3 = superMarket.FindProductById("C001");
 
-            // đơn hàng phụ thuộc vào sản phẩm
-            order1.AddProduct(product1, 2);
-            order1.AddProduct(product2, 2);
-            order1.AddProduct(product3, 2);
-            order2.AddProduct(product2, 3);
+            // đơn hàng phụ thuộc vào sản phẩm (xuất kho qua Warehouse)
+            superMarket.AddProductToOrder(order1, product1, 2);
+            superMarket.AddProductToOrder(order1, product2, 2);
+            superMarket.AddProductToOrder(order1, product3, 2);
+            superMarket.AddProductToOrder(order2, product2, 3);
+            Console.WriteLine();
 
 
+            superMarket.DisplayProducts();
 
             // 3. AGGREGATION: Customer ↔ Order
 
             // khách hàng thêm đơn hàng (aggregation)
             superMarket.AttachOrderToCustomer(customer1, order1);
             superMarket.AttachOrderToCustomer(customer2, order2);
-
-            Console.WriteLine("   Kiểm tra aggregation - Xóa customer nhưng order vẫn tồn tại:");
-            superMarket.RemoveCustomer(customer1);
-            superMarket.DisplayCustomers();
-            Console.WriteLine();
-
-            Console.WriteLine("   Đơn hàng DH001 vẫn tồn tại sau khi xóa customer:");
-            order1.DisplayOrder();
             Console.WriteLine();
 
 
-
-            Console.WriteLine("   Tất cả order trong hệ thống (độc lập với customer):");
             superMarket.DisplayAllOrders();
 
 
             // 4. COMPOSITION: Order ↔ OrderDetails
 
-            Console.WriteLine("   Trước khi xóa order DH001:");
+            Console.WriteLine("   Trước khi xóa orderDetails DH001:");
             order1.DisplayOrder();
             Console.WriteLine();
 
-            Console.WriteLine("   Thực hiện xóa order DH001:");
             superMarket.RemoveOrder(order1);
 
-            Console.WriteLine("   Sau khi xóa order DH001:");
+            Console.WriteLine("   Sau khi xóa orderDetails DH001:");
             order1.DisplayOrder();
             Console.WriteLine();
+            superMarket.DisplayProducts();
 
             Console.ReadKey();
         }
