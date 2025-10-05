@@ -1,15 +1,4 @@
-**Tôi thêm README này để ghi nhớ Aggregation giữa `SuperMarket` và `Warehouse`** 
-
-## Components
-1. **`products` (Danh sách sản phẩm trong cửa hàng)**
-   - Nơi **trực tiếp bán hàng** cho khách
-   - Sản phẩm được thêm vào đây để bán
-   - Ban đầu có đầy đủ số lượng
-
-2. **`Warehouse` (Kho dự trữ)**
-   - Nơi **lưu trữ khi xóa đi cửa hàng**
-   - Ban đầu **TRỐNG**
-   - Chỉ nhận hàng khi cửa hàng đóng cửa (Dispose)
+**Tôi thêm README này để ghi nhớ Aggregation giữa `SuperMarket` và `Product`** 
 
 ## Activity Flow
 
