@@ -29,12 +29,12 @@ namespace LT_B8_OOP
         // xuất kho
         public bool Export(Product product, int quantity)
         {
-            Product? existing = FindProductId(product.ProductId);
-            if (existing == null || existing.Quantity < quantity)
+            Product? exist = FindProductId(product.ProductId);
+            if (exist == null || exist.Quantity < quantity)
             {
                 return false;
             }
-            existing.Quantity -= quantity;
+            exist.Quantity -= quantity;
             return true;
         }
 
@@ -73,6 +73,22 @@ namespace LT_B8_OOP
                 return new DriedProduct(dried.ProductId, dried.Name, dried.Origin, dried.Price, quantity, dried.StorageCondition);
             }
             return product;
+        }
+
+        public void DisplayInventory()
+        {
+            Console.WriteLine("Tồn kho trong Warehouse:");
+            if (Inventory.Count == 0)
+            {
+                Console.WriteLine("Không có sản phẩm tổn kho");
+            }
+            else
+            {
+                foreach (Product product in Inventory)
+                {
+                    Console.WriteLine($"- {product.Name} (ID: {product.ProductId}): {product.Quantity} sản phẩm");
+                }
+            }
         }
     }
 }

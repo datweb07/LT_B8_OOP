@@ -26,18 +26,5 @@ namespace LT_B8_OOP
         {
             Console.WriteLine($"Customer: {CustomerId} - {Name}, Phone: {Phone}, Address: {Address}");
         }
-
-        // aggregation support: cho phép gỡ đơn hàng khỏi khách hàng mà không xóa đơn hàng
-        //public void RemoveOrder(Order order)
-        //{
-        //    if (orders.Remove(order))
-        //    {
-        //        Console.WriteLine($"Đã gỡ đơn hàng {order.OrderId} khỏi khách hàng {Name} (order vẫn tồn tại).");
-        //        // trả order về cửa hàng để quản lý tập trung
-        //        SuperMarket.GetInstance.AcceptOrderIntoStore(order);
-        //    }
-        //    orderDetails.Clear();
-        //}
-
     }
 }

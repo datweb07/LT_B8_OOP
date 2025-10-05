@@ -11,6 +11,7 @@ namespace LT_B8_OOP
 
             // Singleton instance
             SuperMarket superMarket = SuperMarket.GetInstance;
+            Warehouse warehouse = new Warehouse();
 
             // Factory usage
             superMarket.AddProduct("fresh", "F001", "Cá thu tươi", "Việt Nam", 120000, 50, 2);
@@ -78,6 +79,14 @@ namespace LT_B8_OOP
             Console.WriteLine();
 
 
+            
+            warehouse.DisplayInventory();
+            Console.WriteLine();
+
+
+            superMarket.Dispose();
+
+
             superMarket.DisplayAllOrders();
 
 
@@ -87,7 +96,7 @@ namespace LT_B8_OOP
             order1.DisplayOrder();
             Console.WriteLine();
 
-            superMarket.RemoveOrder(order1);
+            order1.RemoveOrder(order1);
 
             Console.WriteLine("   Sau khi xóa orderDetails DH001:");
             order1.DisplayOrder();

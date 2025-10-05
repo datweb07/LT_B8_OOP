@@ -49,5 +49,29 @@ namespace LT_B8_OOP
             }
             Console.WriteLine($"Total Amount: {Total()}");
         }
+
+        //public void RemoveOrder(Order order)
+        //{
+        //    orders.Remove(order);
+        //    // trả hàng: cộng lại tồn kho cho từng sản phẩm trong OrderDetails
+        //    foreach (OrderDetail detail in order.OrderDetails)
+        //    {
+        //        // hoàn trả về kho và đồng bộ số lượng hiển thị
+        //        Warehouse.Return(detail.Product, detail.Quantity);
+        //        detail.Product.Quantity += detail.Quantity;
+        //    }
+        //    order.OrderDetails.Clear();
+
+        //    // xóa tăt cả orders của customer tương ứng
+        //    foreach (Customer c in customers)
+        //    {
+        //        c.orders.Remove(order);
+        //    }
+        //}
+
+        public void RemoveOrder(Order order)
+        {
+            order.OrderDetails.Clear();
+        }
     }
 }
